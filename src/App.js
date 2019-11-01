@@ -20,8 +20,9 @@ class App extends React.Component {
 
   componentDidMount() {
     const { setCurrentUser } = this.props;
-    // This code is for communicate with Firebase Authentication, from
+    // This code is for communicating with Firebase Authentication, from
     // which we get a user auth object
+    // The userAuth parameter comes from the current user state on the firebase project
     this.unsubscribeFromAuth = auth.onAuthStateChanged(async userAuth => {
       // Set state
       if (userAuth) {

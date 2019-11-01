@@ -14,6 +14,44 @@ const config = {
 
 firebase.initializeApp(config);
 
+// Util function to add data to firestore
+export const addCollectionsAndDocuments = async (
+  collectionKey,
+  objectToAdd
+) => {
+  const collectionRef = firestore.collection(collectionKey);
+  console.log("objects to add", objectToAdd);
+
+  // Batch (means group) is to avoid that the transmission of documents is getting interrupt in the
+  // middle for some reason (for example problems with the internet connection). Groups all calls
+  // together into one big request.
+  const batch = firestore.batch();
+  objectToAdd.forEach(obj => {
+    const newDocRef = collectionRef.doc();
+    batch.set(newDocRef, obj);
+  });
+
+  return await batch.commit();
+};
+
+export const convertCollectionsSnapshotToMap = collections => {
+  const transformedCollection = collections.docs.map(doc => {
+    const { title, items } = doc.data();
+
+    return {
+      routeName: encodeURI(title.toLowerCase()),
+      id: doc.id,
+      title,
+      items
+    };
+  });
+
+  return transformedCollection.reduce((accumulator, collection) => {
+    accumulator[collection.title.toLowerCase()] = collection;
+    return accumulator;
+  }, {});
+};
+
 export const createUserProfileDocument = async (userAuth, additionalData) => {
   if (!userAuth) return;
   // Get the DocumentReference object for the logged in user.

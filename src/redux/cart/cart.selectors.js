@@ -5,7 +5,7 @@ const selectCart = state => state.cart;
 
 // output selector (uses createSelector which makes it a
 // memoized selector so that the cart items won't have to
-// rerender every time state is changed)
+// rerender if nothing is changed)
 export const selectCartItems = createSelector(
   [selectCart],
   cart => cart.cartItems
